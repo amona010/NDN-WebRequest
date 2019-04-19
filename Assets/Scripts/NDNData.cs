@@ -32,7 +32,7 @@ public class NDNData : MonoBehaviour
         bool ndnUp = false;
         float xVal = 0;
         float yVal = 0;
-        UnityWebRequest www = UnityWebRequest.Get("http://ndnmap.arl.wustl.edu/json/geocode/");
+        UnityWebRequest www = UnityWebRequest.Get("http://ndndemo.arl.wustl.edu/testbed-nodes.json");
         yield return www.SendWebRequest();
 
         if (www.isNetworkError || www.isHttpError)
@@ -129,15 +129,25 @@ public class NDNData : MonoBehaviour
             reader.Close();
             www.Dispose();
 
-            foreach(testbed_node n in nodes)
-            {
-                Debug.Log(n.nodeName);
-                GameObject newNode = Instantiate(node);
-                newNode.GetComponent<Transform>().position = new Vector3(n.xVal, n.yVal, 0);
-                newNode.name = n.nodeName;
-            }
+            createNodes(nodes);
 
             yield break;
         }
     }
+
+    void createNodes(List<testbed_node> nodes)
+    {
+        foreach (testbed_node n in nodes)
+        {
+            float x = (0.5f * Mathf.Cos((n.xVal) * Mathf.Deg2Rad) * Mathf.Cos(n.yVal * Mathf.Deg2Rad)) * 100;
+            float y = (0.5f * Mathf.Sin(n.yVal * Mathf.Deg2Rad)) * 100;
+            float z = (0.5f * Mathf.Sin((n.xVal) * Mathf.Deg2Rad) * Mathf.Cos(n.yVal * Mathf.Deg2Rad)) * 100;
+            Debug.Log(n.nodeName);
+            GameObject newNode = Instantiate(node);
+            newNode.GetComponent<Transform>().position = new Vector3(x, y, z);
+            newNode.name = n.nodeName;
+        }
+    }
 }
+
+
