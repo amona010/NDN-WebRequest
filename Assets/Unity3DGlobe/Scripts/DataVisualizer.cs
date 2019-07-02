@@ -63,7 +63,7 @@ public class DataVisualizer : MonoBehaviour {
         pos.z = 0.5f * Mathf.Sin((lng) * Mathf.Deg2Rad) * Mathf.Cos(lat * Mathf.Deg2Rad);
         p.transform.parent = Earth.transform;
         p.transform.position = pos;
-        p.transform.localScale = new Vector3(1, 1, Mathf.Max(0.001f, value * ValueScaleMultiplier));
+        p.transform.localScale = new Vector3(1, 1, Mathf.Max(0.001f, value * ValueScaleMultiplier)); //Value in which point size is made
         p.transform.LookAt(pos * 2);
 
         int prevVertCount = meshVertices.Count;
@@ -100,6 +100,51 @@ public class DataVisualizer : MonoBehaviour {
 
         }
     }
+    //New function which should update point locations
+    public void updateMeshes(SeriesData[] allSeries)
+    {
+        foreach (Transform child in Earth.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        GameObject p = Instantiate<GameObject>(PointPrefab);
+        Vector3[] verts = p.GetComponent<MeshFilter>().mesh.vertices;
+        int[] indices = p.GetComponent<MeshFilter>().mesh.triangles;
+
+        List<Vector3> meshVertices = new List<Vector3>(65000);
+        List<int> meshIndices = new List<int>(117000);
+        List<Color> meshColors = new List<Color>(65000);
+
+        for (int i = 0; i < allSeries.Length; i++)
+        {
+            GameObject seriesObj = new GameObject(allSeries[i].Name);
+            seriesObj.transform.parent = Earth.transform;
+            seriesObjects[i] = seriesObj;
+            SeriesData seriesData = allSeries[i];
+            for (int j = 0; j < seriesData.Data.Length; j += 3)
+            {
+                float lat = seriesData.Data[j];
+                float lng = seriesData.Data[j + 1];
+                float value = seriesData.Data[j + 2];
+                AppendPointVertices(p, verts, indices, lng, lat, value, meshVertices, meshIndices, meshColors);
+                if (meshVertices.Count + verts.Length > 65000)
+                {
+                    CreateObject(meshVertices, meshIndices, meshColors, seriesObj);
+                    meshVertices.Clear();
+                    meshIndices.Clear();
+                    meshColors.Clear();
+                }
+            }
+            CreateObject(meshVertices, meshIndices, meshColors, seriesObj);
+            meshVertices.Clear();
+            meshIndices.Clear();
+            meshColors.Clear();
+            seriesObjects[i] = seriesObj;
+        }
+        Destroy(p);
+    }
+
 }
 [System.Serializable]
 public class SeriesData

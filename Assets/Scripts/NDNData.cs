@@ -10,15 +10,26 @@ public class NDNData : MonoBehaviour
     public string path = "C:/Users/Alex/Documents/GitHub/NDN WebRequest/Assets/Resources/newTest.json";
     public List<testbed_node> nodes;
     public GameObject node;
+    public DataVisualizer visualizer;
+    bool running = false; 
 
     void Start()
     {
         nodes = new List<testbed_node>();
-        StartCoroutine(getJSONData());
+        StartCoroutine(getJSONData(0));
     }
 
-    IEnumerator getJSONData()
+    private void Update()
     {
+        if(!running)
+        {
+            StartCoroutine(ExecuteAfterTime(10));
+        }
+    }
+
+    IEnumerator getJSONData(int action)
+    {
+        print("coroutine started");
         string propertyName = "";
         string tokenType = "";
         string nodeName = null;
@@ -129,8 +140,18 @@ public class NDNData : MonoBehaviour
             reader.Close();
             www.Dispose();
 
-            createNodes(nodes);
+            if(action == 0)
+            {
+                serializeNodes(nodes, 0);
+            }
+            else
+            {
+                serializeNodes(nodes, 1);
+            }
+            
 
+            print("Coroutine Ended");
+            
             yield break;
         }
     }
@@ -148,6 +169,67 @@ public class NDNData : MonoBehaviour
             newNode.name = n.nodeName;
         }
     }
+
+    void serializeNodes(List<testbed_node> nodes, int action)
+    {
+        SeriesData data = new SeriesData();
+        SeriesArray array = new SeriesArray();
+        data.Name = "Testbed_Nodes";
+        List<float> values = new List<float>();
+        List<SeriesData> arrayVals = new List<SeriesData>();
+        string jsonString; 
+
+        foreach (testbed_node n in nodes)
+        {
+            values.Add(n.xVal);
+            values.Add(n.yVal);
+            values.Add(Random.Range(.01f, .1f));
+        }
+
+        data.Data = values.ToArray();
+        jsonString = JsonConvert.SerializeObject(data);
+        arrayVals.Add(data);
+        array.AllData = arrayVals.ToArray();
+
+        print(array.AllData);
+
+        if(action == 0)
+        {
+            visualizer.CreateMeshes(array.AllData);
+        }
+        else
+        {
+            visualizer.updateMeshes(array.AllData);
+        }
+        
+    }
+
+    IEnumerator ExecuteAfterTime(float time)
+    {
+        running = true; 
+        yield return new WaitForSeconds(time);
+
+        // Code to execute after the delay
+        //SeriesData data = new SeriesData();
+        //SeriesArray array = new SeriesArray();
+        //data.Name = "Testbed_Nodes";
+        //List<float> values = new List<float>();
+        //List<SeriesData> arrayVals = new List<SeriesData>();
+        //string jsonString;
+
+        //foreach (testbed_node n in nodes)
+        //{
+        //    values.Add(n.xVal);
+        //    values.Add(n.yVal);
+        //    values.Add(Random.Range(.01f, .1f));
+        //}
+
+        //data.Data = values.ToArray();
+        //jsonString = JsonConvert.SerializeObject(data);
+        //arrayVals.Add(data);
+        //array.AllData = arrayVals.ToArray();
+
+        StartCoroutine(getJSONData(1));
+        running = false; 
+    }
 }
-
-
