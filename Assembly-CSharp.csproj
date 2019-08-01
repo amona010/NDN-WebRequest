@@ -62,6 +62,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\NDNData.cs" />
+    <Compile Include="Assets\Scripts\PlanetScript.cs" />
+    <Compile Include="Assets\Scripts\PlayerGravityBody.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovementScript.cs" />
     <Compile Include="Assets\Scripts\testbed_node.cs" />
     <Compile Include="Assets\Unity3DGlobe\Scripts\CameraObrbit.cs" />
     <Compile Include="Assets\Unity3DGlobe\Scripts\DataLoader.cs" />

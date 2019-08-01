@@ -5,7 +5,7 @@ using UnityEngine;
 public class testbed_node
 {
     public string nodeName = null;
-    string shortName = null;
+    public string shortName = null;
     string site = null;
     string https = null;
     bool backBone;
