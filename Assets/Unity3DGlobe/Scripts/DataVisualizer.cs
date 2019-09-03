@@ -1,12 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 public class DataVisualizer : MonoBehaviour
 {
     public GameObject Earth;
     public GameObject PointPrefab;
     public GameObject circle;
+    public GameObject spawner; 
+    public GameObject particlePrefab;
     public float ValueScaleMultiplier = 1;
     GameObject[] seriesObjects;
     int currentSeries = 0;
@@ -33,7 +36,6 @@ public class DataVisualizer : MonoBehaviour
             //CreateObject(meshVertices, meshIndices, meshColors, seriesObj);
             seriesObjects[i].SetActive(false);
         }
-
 
         seriesObjects[currentSeries].SetActive(true);
     }
@@ -94,13 +96,40 @@ public class DataVisualizer : MonoBehaviour
             seriesObjects[i] = seriesObj;
             SeriesData seriesData = allSeries[i];
             index = 0;
-            for (int j = 0; j < seriesData.Data.Length; j += 3)
+            for (int j = 0; j < seriesData.Data.Length; j += 2)
             {
                 float lat = seriesData.Data[j];
                 float lng = seriesData.Data[j + 1];
                 AppendPointVertices(seriesObj, lng, lat, names[index]);
                 index = index + 1;
             }
+        }
+    }
+
+    public void createConnections(Dictionary<int, string> connections)
+    {
+
+        var allKeys = connections.Keys.ToArray();
+
+        foreach (int key in allKeys)
+        {
+            string[] values = connections[key].Split(',');
+
+            GameObject startNode = GameObject.Find(values[0]);
+            GameObject endNode = GameObject.Find(values[1]);
+
+            if (startNode != null && endNode != null)
+            {
+                GameObject newSpawner = Instantiate<GameObject>(spawner);
+                newSpawner.GetComponent<ParticleSpawner>().particle = particlePrefab;
+                newSpawner.transform.position = startNode.transform.position;
+                newSpawner.GetComponent<ParticleSpawner>().source = startNode.transform.position;
+                newSpawner.GetComponent<ParticleSpawner>().DestinationName = endNode.name;
+                newSpawner.GetComponent<ParticleSpawner>().Destination = endNode.transform.position;
+            }
+
+
+
         }
     }
 

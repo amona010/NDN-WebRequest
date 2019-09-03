@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\NDNData.cs" />
+    <Compile Include="Assets\Scripts\ParticleSpawner.cs" />
     <Compile Include="Assets\Scripts\PlanetScript.cs" />
     <Compile Include="Assets\Scripts\PlayerGravityBody.cs" />
     <Compile Include="Assets\Scripts\PlayerMovementScript.cs" />

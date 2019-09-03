@@ -156,10 +156,6 @@ public class NDNData : MonoBehaviour
                     serializeNodes(nodes, 1);
                 }
             }
-
-           
-            
-
         }
 
         www = UnityWebRequest.Get(/*"http://ndnmap.arl.wustl.edu/json/links/"*/"C:/Users/Alex/Downloads/download.JSON");
@@ -234,21 +230,25 @@ public class NDNData : MonoBehaviour
                         }
                     }
                 }
+
+                visualizer.createConnections(startAndFinishNodes);
             }
         }
 
-        var allKeys = startAndFinishNodes.Keys.ToArray();
+        //var allKeys = startAndFinishNodes.Keys.ToArray();
 
-        foreach(int key in allKeys)
-        {
-            string[] values = startAndFinishNodes[key].Split(',');
+        //foreach(int key in allKeys)
+        //{
+        //    string[] values = startAndFinishNodes[key].Split(',');
 
-            GameObject startNode = GameObject.Find(values[0]);
-            GameObject endNode = GameObject.Find(values[1]);
+        //    GameObject startNode = GameObject.Find(values[0]);
+        //    GameObject endNode = GameObject.Find(values[1]);
 
-        }
+        //}
 
         www.Dispose();
+
+
         print("Coroutine Ended");
         yield break;
     }
